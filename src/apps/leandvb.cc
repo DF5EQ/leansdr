@@ -54,7 +54,7 @@ struct config {
   int input_pipe;      // Resize stdin pipe, or 0
   int input_buffer;    // Extra input buffer size
   int buf_factor;      // Buffer sizing
-  float Fs;            // Sampling frequency (Hz) 
+  float Fs;            // Sampling frequency (Hz)
   float Fderot;        // Shift the signal (Hz). Note: Ftune is faster
   int anf;             // Number of auto notch filters
   bool cnr;            // Measure CNR
@@ -64,7 +64,7 @@ struct config {
   int fd_iqsymbols;    // FD for sampled symbols, or -1
   float awgn;          // Standard deviation of noise
 
-  float Fm;            // QPSK symbol rate (Hz) 
+  float Fm;            // QPSK symbol rate (Hz)
   enum dvb_version { DVB_S, DVB_S2 } standard;
   cstln_base::predef constellation;
   bool strongpls;      // For S2 APSK, expect PLS symbols at maximum amplitude
@@ -211,7 +211,7 @@ struct runtime_common {
   pipebuf<int> *p_verrcount;
 
   pipebuf<tspacket> *p_tspackets;
-  
+
   runtime_common(const config &cfg) {
     sch = new scheduler();
     sch->verbose = cfg.verbose;
@@ -415,6 +415,17 @@ struct runtime_common {
 	new spectrum<f32,1024>(sch, *p_preprocessed, *p_spectrum);
       r_spectrum->decimation = decimation(cfg.Fs, 1);  // 1 Hz
       r_spectrum->kavg = 0.5;
+    }
+
+    if ( cfg.fd_spectrum >= 0 ) {
+      file_vectorprinter<f32,1024> *spectrum_printer;
+      if ( cfg.json )
+        spectrum_printer = new file_vectorprinter<f32,1024>
+	  (sch, "SPECTRUM [", "%.3f", ",", "]\n", *p_spectrum, cfg.fd_spectrum);
+      else
+        spectrum_printer = new file_vectorprinter<f32,1024>
+	  (sch, "SPECTRUM %d", " %.3f", "", "\n", *p_spectrum, cfg.fd_spectrum);
+      (void)spectrum_printer;
     }
 
     // FILTERING
@@ -926,7 +937,6 @@ int run_dvbs(config &cfg) {
     symbol_printer->fixed_size = 128;
   }
 
-  if ( cfg.fd_spectrum >= 0 ) {
   // TIMELINE SCOPE
 
 #if 0
@@ -966,7 +976,7 @@ int run_dvbs(config &cfg) {
       r_scope_timeline->samples_per_pixel = (nsamples+w_timeline)/w_timeline;
     }
 #endif  // GUI
-  }
+
   if ( cfg.debug ) {
     if ( ! cfg.hdlc )
       fprintf(stderr,
@@ -1092,7 +1102,7 @@ int run_highspeed_s2(config &cfg) {
   sch.shutdown();
 
   if ( cfg.debug ) sch.dump();
-  
+
   if ( cfg.gui && cfg.linger ) while ( 1 ) { sch.run(); usleep(10000); }
 
   return 0;
@@ -1110,13 +1120,13 @@ int run_highspeed(config &cfg) {
   int w_timeline = 512, h_timeline = 256;
   int w_fft = 1024, h_fft = 256;
   int wh_const = 256;
-  
+
   scheduler sch;
   sch.verbose = cfg.verbose;
   sch.debug = cfg.debug;
 
   int x0 = 100, y0 = 40;
-  
+
   window_placement window_hints[] = {
     { "rawiq (iq)", x0, y0, wh_const,wh_const },
     { "PSK symbols", x0, y0+600, wh_const, wh_const },
@@ -1150,7 +1160,7 @@ int run_highspeed(config &cfg) {
   unsigned long BUF_SLOW = cfg.buf_factor;
 
   // HIGHSPEED: INPUT
-  
+
   if ( cfg.input_format != config::INPUT_U8 )
     fail("--hs requires --u8");
 
@@ -1242,7 +1252,7 @@ int run_highspeed(config &cfg) {
 			 &p_lock, &p_locktime);
   r_sync.fastlock = true;
   r_sync.resync_period = cfg.fastlock ? 1 : 32;
-    
+
   // HIGHSPEED: DEINTERLEAVING
 
   pipebuf< rspacket<u8> > p_rspackets(&sch, "RS-enc packets", BUF_PACKETS);
@@ -1291,7 +1301,7 @@ int run_highspeed(config &cfg) {
   }
   if ( cfg.fd_const >= 0 ) {
     file_carrayprinter<u8> *symbol_printer;
-    if ( cfg.json ) 
+    if ( cfg.json )
       symbol_printer = new file_carrayprinter<u8>
 	(&sch, "SYMBOLS [", "[%.0f,%.0f]", ",", "]\n", p_sampled, cfg.fd_const);
     else
@@ -1337,13 +1347,13 @@ int run_highspeed(config &cfg) {
 	    "  '_': packet received without errors\n"
 	    "  '.': error-corrected packet\n"
 	    "  '!': packet with remaining errors\n");
-    
+
   sch.run();
 
   sch.shutdown();
 
   if ( cfg.debug ) sch.dump();
-  
+
   if ( cfg.gui && cfg.linger ) while ( 1 ) { sch.run(); usleep(10000); }
 
   return 0;
@@ -1351,7 +1361,7 @@ int run_highspeed(config &cfg) {
 #endif // TBD
 
 // Command-line
- 
+
 void usage(const char *name, FILE *f, int c, const char *info=NULL) {
   fprintf(f, "Usage: %s [options]  < IQ  > TS\n", name);
   fprintf(f, "Demodulate DVB-S I/Q on stdin, output MPEG packets on stdout\n");
