@@ -413,7 +413,7 @@ struct runtime_common {
       p_spectrum = new pipebuf<float[1024]>(sch, "spectrum", BUF_SLOW);
       spectrum<f32,1024> *r_spectrum =
 	new spectrum<f32,1024>(sch, *p_preprocessed, *p_spectrum);
-      r_spectrum->decimation = decimation(cfg.Fs, 1);  // 1 Hz
+      r_spectrum->decimation = decimation(cfg.Fs, 3);  // 3 Hz
       r_spectrum->kavg = 0.5;
     }
 
