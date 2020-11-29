@@ -221,10 +221,10 @@ struct runtime_common {
     #define W_SCALE 3/4
 
     int w_timeline = 512*W_SCALE, h_timeline = 256*W_SCALE;
-    int w_fft = 1024*W_SCALE, h_fft = 256*W_SCALE;
+    int w_fft = 812*W_SCALE, h_fft = 256*W_SCALE;
     int wh_const = 256*W_SCALE;
 
-    int x0 = 100*W_SCALE, y0 = 20*W_SCALE;
+    int x0 = 88*W_SCALE, y0 = 44*W_SCALE;
 
     static window_placement window_hints[] = {
       { "rawiq (iq)", x0, y0, wh_const,wh_const },
