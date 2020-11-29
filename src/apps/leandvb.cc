@@ -414,7 +414,7 @@ struct runtime_common {
       spectrum<f32,1024> *r_spectrum =
 	new spectrum<f32,1024>(sch, *p_preprocessed, *p_spectrum);
       r_spectrum->decimation = decimation(cfg.Fs, 3);  // 3 Hz
-      r_spectrum->kavg = 0.5;
+      r_spectrum->kavg = 0.2;
     }
 
     if ( cfg.fd_spectrum >= 0 ) {
