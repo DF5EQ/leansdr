@@ -218,21 +218,23 @@ struct runtime_common {
     sch->debug = cfg.debug;
     sch->debug2 = cfg.debug2;
 
-    int w_timeline = 512, h_timeline = 256;
-    int w_fft = 1024, h_fft = 256;
-    int wh_const = 256;
+    #define W_SCALE 3/4
 
-    int x0 = 100, y0 = 20;
+    int w_timeline = 512*W_SCALE, h_timeline = 256*W_SCALE;
+    int w_fft = 1024*W_SCALE, h_fft = 256*W_SCALE;
+    int wh_const = 256*W_SCALE;
+
+    int x0 = 100*W_SCALE, y0 = 20*W_SCALE;
 
     static window_placement window_hints[] = {
       { "rawiq (iq)", x0, y0, wh_const,wh_const },
-      { "rawiq (spectrum)", x0+300, y0, w_fft, h_fft },
-      { "preprocessed (iq)", x0, y0+300, wh_const, wh_const },
-      { "preprocessed (spectrum)", x0+300, y0+300, w_fft, h_fft },
-      { "PSK symbols", x0, y0+600, wh_const, wh_const },  // TBD obsolete
-      { "cstln", x0, y0+600, wh_const, wh_const },
-      { "PLS cstln", x0+300, y0+600, wh_const, wh_const },
-      { "timeline", x0+600, y0+600, w_timeline, h_timeline },
+      { "rawiq (spectrum)", x0+300*W_SCALE, y0, w_fft, h_fft },
+      { "preprocessed (iq)", x0, y0+300*W_SCALE, wh_const, wh_const },
+      { "preprocessed (spectrum)", x0+300*W_SCALE, y0+300*W_SCALE, w_fft, h_fft },
+      { "PSK symbols", x0, y0+600*W_SCALE, wh_const, wh_const },  // TBD obsolete
+      { "cstln", x0, y0+600*W_SCALE, wh_const, wh_const },
+      { "PLS cstln", x0+300*W_SCALE, y0+600*W_SCALE, wh_const, wh_const },
+      { "timeline", x0+600*W_SCALE, y0+600*W_SCALE, w_timeline, h_timeline },
       { NULL, }
     };
     sch->windows = window_hints;
